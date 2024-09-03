@@ -11,7 +11,7 @@ cp * -r /var/project/cicddeploy
 # Navigate to your project directory
 cd /var/project/cicddeploy
 
-# Find the process ID (PID) using port 3000
+# Find the process ID (PID) using port 5000
 PID=$(lsof -t -i:5000)
 
 # If the PID is not empty, kill the process
@@ -31,7 +31,7 @@ npm install express
 # Run the deploy script
 sudo npm run dev
 
-# Find the process ID (PID) using port 3000
+# Find the process ID (PID) using port 5000
 PID=$(lsof -t -i:5000)
 
 # You may want to check if the process is still running after the deploy

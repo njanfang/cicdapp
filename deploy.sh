@@ -1,42 +1,37 @@
-# Navigate to your project directory
+#!/bin/bash
 
-cd /var/project/cicddeploy
+# Define variables for paths
+DEPLOY_DIR="/var/project/cicddeploy"
+JENKINS_WORKSPACE="/var/lib/jenkins/workspace/appnode"
 
-# Navigate to your project jenkins/workspace/ directory
-cd /var/lib/jenkins/workspace/appnode
+# Navigate to Jenkins workspace directory
+cd "$JENKINS_WORKSPACE"
 
-# Copy files using rsync
-cp * -r /var/project/cicddeploy
+# Synchronize files using rsync
+rsync -av --exclude='.git' "$JENKINS_WORKSPACE/" "$DEPLOY_DIR/"
 
-# Navigate to your project directory
-cd /var/project/cicddeploy
+# Navigate to the deploy directory
+cd "$DEPLOY_DIR"
 
-# Find the process ID (PID) using port 5000
+# Stop the pm2 process (if running)
+pm2 stop all || echo "No pm2 process running"
+
+# Find the process ID (PID) using port 5000 and kill it
 PID=$(lsof -t -i:5000)
-
-# If the PID is not empty, kill the process
 if [ -n "$PID" ]; then
   su -c "kill -9 $PID" -s /bin/bash root
 fi
 
-# Navigate to your project directory
-cd /var/project/cicddeploy
+# Install Node.js dependencies
+npm install
 
-# stop pm2 process
-pm2 stop ecosystem.config.js
+# Start the application using pm2
+pm2 start ecosystem.config.js || pm2 start index.js --name "my-app"
 
-# install node dependency
-npm install express
-
-# Run the deploy script
-sudo npm run dev
-
-# Find the process ID (PID) using port 5000
+# Verify that the application is running on port 5000
 PID=$(lsof -t -i:5000)
-
-# You may want to check if the process is still running after the deploy
 if [ -n "$PID" ]; then
-  echo "The process is still running with PID $PID."
+  echo "Deployment successful. Process running on port 5000 with PID $PID."
 else
-  echo "Deployment successful.  process running on port 5000."
+  echo "Deployment failed. Process not running on port 5000."
 fi

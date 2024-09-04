@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Define variables for paths
-DEPLOY_DIR="/var/project/cicddeploy"
+DEPLOY_DIR="/var/cicdappl/cicdapp"
 JENKINS_WORKSPACE="/var/lib/jenkins/workspace/cicdappl"
 
 # Navigate to Jenkins workspace directory

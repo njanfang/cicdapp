@@ -2,7 +2,10 @@
 
 # Define variables for paths
 DEPLOY_DIR="/var/project/cicddeploy"
-JENKINS_WORKSPACE="/var/lib/jenkins/workspace/appnode"
+JENKINS_WORKSPACE="/var/lib/jenkins/workspace/cicdappl"
+
+# Ensure the script has the necessary permissions
+chmod +x "$JENKINS_WORKSPACE/deploy.sh"
 
 # Navigate to Jenkins workspace directory
 cd "$JENKINS_WORKSPACE" || { echo "Failed to navigate to Jenkins workspace"; exit 1; }

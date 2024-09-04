@@ -2,7 +2,7 @@
 
 # Define variables for paths
 DEPLOY_DIR="/var/project/cicddeploy"
-JENKINS_WORKSPACE="/var/lib/jenkins/workspace/appnode"
+JENKINS_WORKSPACE="/var/lib/jenkins/workspace/cicdappl"
 
 # Navigate to Jenkins workspace directory
 cd "$JENKINS_WORKSPACE"

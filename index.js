@@ -20,7 +20,7 @@ app.get('/', (req, res) => {
                     padding: 50px;
                 }
             </style>
-            <title>Welcome to Cloud Ghislain Njanfang Youtube channel ,Please share & subscribe , Thank you </title>
+            <title>Welcome to Cloud Ghislain Njanfang Youtube Channel ,Please share & subscribe , Thank you </title>
         </head>
         <body>
             <h1>Welcome to Cloud njanfang Youtube channel ,Please share & subscribe , Thank you very much for 1 subscribers , keep loving , thank you </h1>

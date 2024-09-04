@@ -12,7 +12,7 @@ app.get('/', (req, res) => {
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <style>
                 body {
-                    background-color: yellow;
+                    background-color: darkgreen;
                     font-style: italic;
                     font-family: 'Arial', sans-serif;
                     color: white;

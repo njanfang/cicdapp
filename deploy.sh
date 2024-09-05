@@ -1,33 +1,31 @@
 #!/bin/bash
 
-# Set paths
-SOURCE_DIR="/var/cicdappl/cicdapp"
-DESTINATION_DIR="/var/cicdappl/cicdapp"
-
-# Use a log file in a directory where Jenkins has write access
+# Set log file path where Jenkins has write access
 LOG_FILE="/tmp/deploy.log"
+DESTINATION_DIR="/var/cicdappl/cicdapp"
+APP_NAME="your_actual_app_name"  # Update this to the actual app name
+
+# Start logging
 echo "Deployment started at $(date)" >> $LOG_FILE
 
-# Stop the application using PM2 (use the actual app name)
-echo "Stopping the existing PM2 process..." >> $LOG_FILE
-pm2 stop your_actual_app_name || echo "PM2 process not running, skipping stop..." >> $LOG_FILE
+# Stop the PM2 process
+echo "Stopping the PM2 process..." >> $LOG_FILE
+pm2 stop $APP_NAME || echo "PM2 process not running, skipping stop..." >> $LOG_FILE
 
-# Sync files from source to destination
-echo "Syncing files from $SOURCE_DIR to $DESTINATION_DIR" >> $LOG_FILE
-rsync -av --exclude 'node_modules' --exclude '.git' "$SOURCE_DIR/" "$DESTINATION_DIR/" >> $LOG_FILE 2>&1
+# Sync project files
+echo "Syncing project files..." >> $LOG_FILE
+rsync -avz --exclude 'node_modules' /var/lib/jenkins/workspace/cicdappl/ $DESTINATION_DIR >> $LOG_FILE 2>&1
+
+# Change to the destination directory
+cd $DESTINATION_DIR || { echo "Failed to change directory to $DESTINATION_DIR" >> $LOG_FILE; exit 1; }
 
 # Install dependencies
-echo "Installing Node.js dependencies..." >> $LOG_FILE
-cd "$DESTINATION_DIR" || exit
+echo "Installing dependencies..." >> $LOG_FILE
 npm install >> $LOG_FILE 2>&1
 
-# Start the application using PM2
-echo "Starting the application using PM2..." >> $LOG_FILE
-pm2 start index.js --name your_actual_app_name >> $LOG_FILE 2>&1
+# Restart the PM2 process
+echo "Restarting the PM2 process..." >> $LOG_FILE
+pm2 start $APP_NAME || pm2 restart $APP_NAME >> $LOG_FILE 2>&1
 
-# Confirm the process is running
+# Log completion
 echo "Deployment finished at $(date)" >> $LOG_FILE
-pm2 status your_actual_app_name >> $LOG_FILE
-
-# Exit script
-exit 0

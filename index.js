@@ -24,7 +24,7 @@ app.get('/', (req, res) => {
         </head>
         <body>
             <h1>Welcome to Njanfang YouTube channel, Please share & subscribe, Thank you very much for 1 subscribers, keep loving, Thank You </h1>
-            <p>Don't forget to subscribe & share with friends</p>
+            <p>Don't forget to subscribe & share with friends.</p>
         </body>
         </html>
     `);

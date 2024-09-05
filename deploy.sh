@@ -3,14 +3,17 @@
 # Define log file in a writable directory
 LOG_FILE="/tmp/deploy.log"
 DESTINATION_DIR="/var/cicdappl/cicdapp"
-APP_NAME="cicdapp"  # Update this with your actual PM2 app name
 
 # Log starting time
 echo "Deployment started at $(date)" >> $LOG_FILE
 
-# Stop the PM2 process
-echo "Stopping PM2 process $APP_NAME..." >> $LOG_FILE
-pm2 stop $APP_NAME >> $LOG_FILE 2>&1 || echo "PM2 process not found. Skipping stop." >> $LOG_FILE
+# List all PM2 processes to log file for reference
+echo "Listing PM2 processes..." >> $LOG_FILE
+pm2 list >> $LOG_FILE 2>&1
+
+# Stop all PM2 processes (optional: if needed, uncomment this)
+# echo "Stopping all PM2 processes..." >> $LOG_FILE
+# pm2 stop all >> $LOG_FILE 2>&1
 
 # Sync project files from Jenkins workspace
 echo "Syncing project files..." >> $LOG_FILE
@@ -23,9 +26,9 @@ cd $DESTINATION_DIR || { echo "Failed to change directory to $DESTINATION_DIR" >
 echo "Installing dependencies..." >> $LOG_FILE
 npm install >> $LOG_FILE 2>&1
 
-# Start or restart the PM2 process
-echo "Starting/restarting PM2 process $APP_NAME..." >> $LOG_FILE
-pm2 start $APP_NAME >> $LOG_FILE 2>&1 || pm2 restart $APP_NAME >> $LOG_FILE 2>&1
+# Restart all PM2 processes (or start if no processes are running)
+echo "Starting/restarting all PM2 processes..." >> $LOG_FILE
+pm2 restart all >> $LOG_FILE 2>&1 || pm2 start ecosystem.config.js >> $LOG_FILE 2>&1
 
 # Log completion time
 echo "Deployment finished at $(date)" >> $LOG_FILE

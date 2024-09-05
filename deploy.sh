@@ -4,10 +4,21 @@
 JENKINS_WORKSPACE="/var/lib/jenkins/workspace/cicdappl"
 DEPLOY_DIR="/var/cicdappl/cicdapp"
 
+# Ensure the script is being run from the correct directory
 cd "$JENKINS_WORKSPACE" || { echo "Failed to navigate to Jenkins workspace"; exit 1; }
 
 # Copy files from Jenkins workspace to the deployment directory
+echo "Copying files to $DEPLOY_DIR..."
 cp -r * "$DEPLOY_DIR" || { echo "Failed to copy files to $DEPLOY_DIR"; exit 1; }
+
+# Verify that deploy.sh was copied correctly
+if [ ! -f "$DEPLOY_DIR/deploy.sh" ]; then
+    echo "deploy.sh not found in $DEPLOY_DIR. Exiting..."
+    exit 1
+fi
+
+# Ensure deploy.sh has execute permissions
+chmod +x "$DEPLOY_DIR/deploy.sh"
 
 # Navigate to the deployment directory
 cd "$DEPLOY_DIR" || { echo "Failed to navigate to $DEPLOY_DIR"; exit 1; }

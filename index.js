@@ -23,7 +23,7 @@ app.get('/', (req, res) => {
             <title>Welcome to Cloud Ghislain Njanfang Youtube Channel ,Please share & subscribe , Thank you </title>
         </head>
         <body>
-            <h1>Welcome to G. Njanfang YouTube channel, Please share & subscribe, Thank you very much for 1 subscriber, keep loving, Thank You. </h1>
+            <h1>Welcome to Njanfang YouTube channel, Please share & subscribe, Thank you very much for 1 subscriber, keep loving, Thank You. </h1>
             <p>Don't forget to subscribe & share with friends.</p>
         </body>
         </html>

@@ -1,14 +1,14 @@
 #!/bin/bash
 
-# Directory variables
+# Set paths
 SOURCE_DIR="/var/cicdappl/cicdapp"
 DESTINATION_DIR="/var/cicdappl/cicdapp"
 
-# Logging (changed to /tmp for better permissions)
+# Use a log file in a directory where Jenkins has write access
 LOG_FILE="/tmp/deploy.log"
 echo "Deployment started at $(date)" >> $LOG_FILE
 
-# Stop the application using PM2 (make sure the app_name is correct)
+# Stop the application using PM2 (use the actual app name)
 echo "Stopping the existing PM2 process..." >> $LOG_FILE
 pm2 stop your_actual_app_name || echo "PM2 process not running, skipping stop..." >> $LOG_FILE
 
@@ -23,7 +23,7 @@ npm install >> $LOG_FILE 2>&1
 
 # Start the application using PM2
 echo "Starting the application using PM2..." >> $LOG_FILE
-pm2 start your_actual_app_name || pm2 start index.js --name your_actual_app_name >> $LOG_FILE 2>&1
+pm2 start index.js --name your_actual_app_name >> $LOG_FILE 2>&1
 
 # Confirm the process is running
 echo "Deployment finished at $(date)" >> $LOG_FILE

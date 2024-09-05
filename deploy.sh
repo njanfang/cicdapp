@@ -24,13 +24,13 @@ else
     exit 1
 fi
 
-# Step 5: Ensure deploy.sh is executable
+# Step 5: Ensure deploy.sh has execute permissions
 chmod +x "$DEPLOY_DIR/deploy.sh" || { echo "Failed to make deploy.sh executable"; exit 1; }
 
-# Step 6: Check deploy.sh permissions
+# Step 6: Check permissions of deploy.sh
 echo "Permissions for deploy.sh:"
 ls -la "$DEPLOY_DIR/deploy.sh"
 
-# Step 7: Run deploy.sh using the full path
-echo "Running deploy.sh..."
+# Step 7: Attempt to run deploy.sh using the full path
+echo "Attempting to run deploy.sh using full path..."
 sudo /var/cicdappl/cicdapp/deploy.sh

@@ -1,70 +1,33 @@
 #!/bin/bash
 
-# Define paths
-JENKINS_WORKSPACE="/var/lib/jenkins/workspace/cicdappl"
-DEPLOY_DIR="/var/cicdappl/cicdapp"
+# Directory variables
+SOURCE_DIR="/path/to/source"
+DESTINATION_DIR="/path/to/project"
 
-# Step 1: Display contents of Jenkins workspace
-echo "Listing contents of Jenkins workspace ($JENKINS_WORKSPACE):"
-ls -la "$JENKINS_WORKSPACE"
+# Logging
+LOG_FILE="/var/log/deploy.log"
+echo "Deployment started at $(date)" >> $LOG_FILE
 
-# Step 2: Copy files to the deployment directory
-echo "Copying files from Jenkins workspace to $DEPLOY_DIR"
-cp -r "$JENKINS_WORKSPACE"/* "$DEPLOY_DIR" || { echo "Failed to copy files to $DEPLOY_DIR"; exit 1; }
+# Stop the application using PM2
+echo "Stopping the existing PM2 process..." >> $LOG_FILE
+pm2 stop app_name || echo "PM2 process not running, skipping stop..." >> $LOG_FILE
 
-# Step 3: Display contents of the deployment directory
-echo "Listing contents of deployment directory ($DEPLOY_DIR):"
-ls -la "$DEPLOY_DIR"
+# Sync files from source to destination
+echo "Syncing files from $SOURCE_DIR to $DESTINATION_DIR" >> $LOG_FILE
+rsync -av --exclude 'node_modules' --exclude '.git' "$SOURCE_DIR/" "$DESTINATION_DIR/" >> $LOG_FILE 2>&1
 
-# Step 4: Check if deploy.sh exists in the deployment directory
-if [ -f "$DEPLOY_DIR/deploy.sh" ]; then
-    echo "deploy.sh successfully copied to $DEPLOY_DIR"
-else
-    echo "deploy.sh not found in $DEPLOY_DIR. Exiting..."
-    exit 1
-fi
+# Install dependencies
+echo "Installing Node.js dependencies..." >> $LOG_FILE
+cd "$DESTINATION_DIR" || exit
+npm install >> $LOG_FILE 2>&1
 
-# Step 5: Ensure deploy.sh has execute permissions
-chmod +x "$DEPLOY_DIR/deploy.sh" || { echo "Failed to make deploy.sh executable"; exit 1; }
+# Start the application using PM2
+echo "Starting the application using PM2..." >> $LOG_FILE
+pm2 start app_name || pm2 start index.js --name app_name >> $LOG_FILE 2>&1
 
-# Step 6: Check permissions of deploy.sh
-echo "Permissions for deploy.sh:"
-ls -la "$DEPLOY_DIR/deploy.sh"
+# Confirm the process is running
+echo "Deployment finished at $(date)" >> $LOG_FILE
+pm2 status app_name >> $LOG_FILE
 
-# Step 7: Run deploy.sh directly
-echo "Running deploy.sh..."
-/var/cicdappl/cicdapp/deploy.sh
-
-# Step 8: Check for processes running on port 5000 and kill them
-echo "Checking for existing processes on port 5000..."
-PID=$(lsof -t -i:5000)
-if [ -n "$PID" ]; then
-    echo "Killing existing process on port 5000 (PID: $PID)"
-    sudo kill -9 "$PID" || { echo "Failed to kill process on port 5000"; exit 1; }
-else
-    echo "No existing process found on port 5000"
-fi
-
-# Step 9: Stop the pm2 process if running
-echo "Stopping any existing pm2 processes..."
-pm2 stop ecosystem.config.js || echo "No pm2 process running"
-
-# Step 10: Install Node.js dependencies
-echo "Installing Node.js dependencies..."
-npm install || { echo "npm install failed"; exit 1; }
-
-# Step 11: Start the app with pm2
-echo "Starting the app with pm2..."
-pm2 start ecosystem.config.js || pm2 start index.js --name "cicdappl"
-
-# Step 12: Check if the app is running on port 5000
-echo "Checking if the app is running on port 5000..."
-NEW_PID=$(lsof -t -i:5000)
-if [ -n "$NEW_PID" ]; then
-    echo "Deployment successful. App running on port 5000 with PID: $NEW_PID"
-else
-    echo "Deployment failed. No process running on port 5000."
-    echo "Displaying pm2 logs for troubleshooting:"
-    pm2 logs cicdappl  # Display pm2 logs for troubleshooting
-    exit 1
-fi
+# Exit script
+exit 0

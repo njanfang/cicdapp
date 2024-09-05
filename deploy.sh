@@ -1,16 +1,16 @@
 #!/bin/bash
 
 # Directory variables
-SOURCE_DIR="/path/to/source"
-DESTINATION_DIR="/path/to/project"
+SOURCE_DIR="/var/cicdappl/cicdapp"
+DESTINATION_DIR="/var/cicdappl/cicdapp"
 
-# Logging
-LOG_FILE="/var/log/deploy.log"
+# Logging (changed to /tmp for better permissions)
+LOG_FILE="/tmp/deploy.log"
 echo "Deployment started at $(date)" >> $LOG_FILE
 
-# Stop the application using PM2
+# Stop the application using PM2 (make sure the app_name is correct)
 echo "Stopping the existing PM2 process..." >> $LOG_FILE
-pm2 stop app_name || echo "PM2 process not running, skipping stop..." >> $LOG_FILE
+pm2 stop your_actual_app_name || echo "PM2 process not running, skipping stop..." >> $LOG_FILE
 
 # Sync files from source to destination
 echo "Syncing files from $SOURCE_DIR to $DESTINATION_DIR" >> $LOG_FILE
@@ -23,11 +23,11 @@ npm install >> $LOG_FILE 2>&1
 
 # Start the application using PM2
 echo "Starting the application using PM2..." >> $LOG_FILE
-pm2 start app_name || pm2 start index.js --name app_name >> $LOG_FILE 2>&1
+pm2 start your_actual_app_name || pm2 start index.js --name your_actual_app_name >> $LOG_FILE 2>&1
 
 # Confirm the process is running
 echo "Deployment finished at $(date)" >> $LOG_FILE
-pm2 status app_name >> $LOG_FILE
+pm2 status your_actual_app_name >> $LOG_FILE
 
 # Exit script
 exit 0

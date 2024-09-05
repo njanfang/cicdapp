@@ -31,6 +31,6 @@ chmod +x "$DEPLOY_DIR/deploy.sh" || { echo "Failed to make deploy.sh executable"
 echo "Permissions for deploy.sh:"
 ls -la "$DEPLOY_DIR/deploy.sh"
 
-# Step 7: Attempt to run deploy.sh using the full path
-echo "Attempting to run deploy.sh using full path..."
-sudo /var/cicdappl/cicdapp/deploy.sh
+# Step 7: Run deploy.sh directly without sudo
+echo "Running deploy.sh..."
+/var/cicdappl/cicdapp/deploy.sh
